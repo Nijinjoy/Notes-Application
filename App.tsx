@@ -1,13 +1,12 @@
-
 import React from 'react';
 import { View, } from 'react-native';
-import Routes from './src/Routes';
+import Routes from './src/navigation/Routes';
 
 
 function App(): JSX.Element {
 
   return (
-    <View >
+    <View style={{ flex: 1 }}>
       <Routes />
     </View>
   );
