@@ -94,7 +94,8 @@ const EditScreen = ({ navigation, route }) => {
             <HeaderComponent title='Add Screen' headerIcon={backArrow} navigation={() => navigation.goBack()} tintColor="white" />
             <View style={{ marginHorizontal: WIDTH * 0.05, gap: HEIGHT * 0.03 }}>
                 <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: HEIGHT * 0.03 }}>Enter product details</Text>
-                <TextInput
+
+                {/* <TextInput
                     value={productData.productName}
                     onChangeText={(text) => setProductData({ ...productData, productName: text })}
                     placeholder='Enter product name'
@@ -119,6 +120,14 @@ const EditScreen = ({ navigation, route }) => {
                     keyboardType="numeric"
                     placeholder='Count'
                     style={{ borderWidth: 1, padding: WIDTH * 0.04, borderRadius: WIDTH * 0.02 }}
+                /> */}
+
+                <TextInput
+                    // key={key}
+                    // value={value.toString()}
+                    placeholder='Enter name'
+                    onChangeText={(text) => setProductData({ ...productData, [key]: text })}
+                    style={{ borderWidth: 1, padding: WIDTH * 0.03, borderRadius: WIDTH * 0.01 }}
                 />
 
                 <Pressable style={{ borderWidth: 1, justifyContent: 'center', alignItems: 'center', padding: WIDTH * 0.02, borderRadius: WIDTH * 0.02 }} onPress={saveProduct}>
