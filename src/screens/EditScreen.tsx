@@ -5,6 +5,7 @@ import Realm from "realm";
 import HeaderComponent from '../components/HeaderComponent';
 import { backArrow } from '../assets/images';
 
+
 class Product extends Realm.Object {
     static schema = {
         name: 'Product',
@@ -15,53 +16,50 @@ class Product extends Realm.Object {
             count: 'int',
             description: 'string'
         },
-        primaryKey: '_id',
+        primaryKey: '_id'
     };
 }
 
 const realmConfig = {
     schema: [Product],
-};
+}
 
 const EditScreen = ({ navigation, route }) => {
-    const [productId, setProductId] = useState(null);
-    const [productName, setProductName] = useState('');
-    const [price, setPrice] = useState('');
-    const [description, setDescription] = useState('');
-    const [count, setCount] = useState('');
+    const [productData, setProductData] = useState({ productName: '', price: '', description: '', count: '' });
+    const { productId } = route.params || {}
+
+    console.log("productData===>", productData);
 
     useEffect(() => {
-        const { productId } = route.params || {};
         if (productId) {
-            setProductId(productId);
             fetchProductDetails(productId);
         }
-    }, [route.params]);
+    }, [route.params])
 
     const fetchProductDetails = (productId) => {
         Realm.open(realmConfig)
             .then((realm) => {
                 const existingProduct = realm.objectForPrimaryKey('Product', productId);
                 if (existingProduct) {
-                    setProductName(existingProduct.product_name);
-                    setPrice(existingProduct.price.toString());
-                    setDescription(existingProduct.description);
-                    setCount(existingProduct.count.toString());
+                    setProductData({
+                        productName: existingProduct.product_name,
+                        price: existingProduct.price.toString(),
+                        description: existingProduct.description,
+                        count: existingProduct.count.toString(),
+                    });
                 }
             })
             .catch((error) => {
-                console.error('Error fetching product details:', error);
-            });
+                console.error('Error fetching product details', error);
+            })
     };
 
-
-
     const saveProduct = () => {
+        const { productName, price, description, count } = productData;
         if (!productName || !price || !description || !count) {
-            Alert.alert('Validation Error', 'Please fill all fields.');
+            Alert.alert('Validation Error', 'Please fill all fields');
             return;
         }
-
         Realm.open(realmConfig)
             .then((realm) => {
                 realm.write(() => {
@@ -92,32 +90,32 @@ const EditScreen = ({ navigation, route }) => {
     };
 
     return (
-        <View >
+        <View>
             <HeaderComponent title='Add Screen' headerIcon={backArrow} navigation={() => navigation.goBack()} tintColor="white" />
             <View style={{ marginHorizontal: WIDTH * 0.05, gap: HEIGHT * 0.03 }}>
                 <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: HEIGHT * 0.03 }}>Enter product details</Text>
                 <TextInput
-                    value={productName}
-                    onChangeText={(text) => setProductName(text)}
+                    value={productData.productName}
+                    onChangeText={(text) => setProductData({ ...productData, productName: text })}
                     placeholder='Enter product name'
                     style={{ borderWidth: 1, padding: WIDTH * 0.04, borderRadius: WIDTH * 0.02 }}
                 />
                 <TextInput
-                    value={price}
-                    onChangeText={(text) => setPrice(text)}
+                    value={productData.price}
+                    onChangeText={(text) => setProductData({ ...productData, price: text })}
                     keyboardType="numeric"
                     placeholder='Enter price of product'
                     style={{ borderWidth: 1, padding: WIDTH * 0.04, borderRadius: WIDTH * 0.02 }}
                 />
                 <TextInput
-                    value={description}
-                    onChangeText={(text) => setDescription(text)}
+                    value={productData.description}
+                    onChangeText={(text) => setProductData({ ...productData, description: text })}
                     placeholder='Description of product'
                     style={{ borderWidth: 1, padding: WIDTH * 0.04, borderRadius: WIDTH * 0.02 }}
                 />
                 <TextInput
-                    value={count}
-                    onChangeText={(text) => setCount(text)}
+                    value={productData.count}
+                    onChangeText={(text) => setProductData({ ...productData, count: text })}
                     keyboardType="numeric"
                     placeholder='Count'
                     style={{ borderWidth: 1, padding: WIDTH * 0.04, borderRadius: WIDTH * 0.02 }}
@@ -132,4 +130,3 @@ const EditScreen = ({ navigation, route }) => {
 }
 
 export default EditScreen
-

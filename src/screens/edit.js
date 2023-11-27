@@ -1,6 +1,7 @@
+import { View, Text, SafeAreaView, TextInput, Pressable, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Pressable, Alert } from 'react-native';
-import Realm from 'realm';
+import { HEIGHT, WIDTH } from '../constants/Dimension';
+import Realm from "realm";
 import HeaderComponent from '../components/HeaderComponent';
 import { backArrow } from '../assets/images';
 
@@ -12,7 +13,7 @@ class Product extends Realm.Object {
             product_name: 'string',
             price: 'double',
             count: 'int',
-            description: 'string',
+            description: 'string'
         },
         primaryKey: '_id',
     };
@@ -23,53 +24,42 @@ const realmConfig = {
 };
 
 const EditScreen = ({ navigation, route }) => {
-    const [productId, setProductId] = useState(null);
-    const [formFields, setFormFields] = useState([
-        { key: 'productName', value: '', placeholder: 'Enter product name' },
-        { key: 'price', value: '', placeholder: 'Enter price of product', keyboardType: 'numeric' },
-        { key: 'description', value: '', placeholder: 'Description of product' },
-        { key: 'count', value: '', placeholder: 'Count', keyboardType: 'numeric' },
-    ]);
+    const [productData, setProductData] = useState({
+        productName: '',
+        price: '',
+        description: '',
+        count: ''
+    });
+    const { productId } = route.params || {};
 
     useEffect(() => {
-        const { productId } = route.params || {};
         if (productId) {
-            setProductId(productId);
             fetchProductDetails(productId);
         }
     }, [route.params]);
-
 
     const fetchProductDetails = (productId) => {
         Realm.open(realmConfig)
             .then((realm) => {
                 const existingProduct = realm.objectForPrimaryKey('Product', productId);
                 if (existingProduct) {
-                    const updatedFormFields = formFields.map((field) => ({
-                        ...field,
-                        value: existingProduct[field.key].toString(),
-                    }));
-                    setFormFields(updatedFormFields);
+                    setProductData({
+                        productName: existingProduct.product_name,
+                        price: existingProduct.price.toString(),
+                        description: existingProduct.description,
+                        count: existingProduct.count.toString(),
+                    });
                 }
             })
             .catch((error) => {
-                console.error('Error fetching product details:', error);
+                console.error('Error fetching product details', error);
             });
     };
 
-
-    const handleTextInputChange = (key, text) => {
-        const updatedFormFields = formFields.map((field) =>
-            field.key === key ? { ...field, value: text } : field
-        );
-        setFormFields(updatedFormFields);
-    };
-
-
     const saveProduct = () => {
-        const areAllFieldsFilled = formFields.every((field) => field.value.trim() !== '');
-        if (!areAllFieldsFilled) {
-            Alert.alert('Validation Error', 'Please fill all fields.');
+        const { productName, price, description, count } = productData;
+        if (!productName || !price || !description || !count) {
+            Alert.alert('Validation Error', 'Please fill all fields..');
             return;
         }
 
@@ -79,17 +69,18 @@ const EditScreen = ({ navigation, route }) => {
                     if (productId) {
                         const existingProduct = realm.objectForPrimaryKey('Product', productId);
                         if (existingProduct) {
-                            formFields.forEach((field) => {
-                                existingProduct[field.key] = field.key === 'price' || field.key === 'count' ? parseFloat(field.value) : field.value;
-                            });
+                            existingProduct.product_name = productName;
+                            existingProduct.price = parseFloat(price);
+                            existingProduct.count = parseInt(count);
+                            existingProduct.description = description;
                         }
                     } else {
                         const newProduct = realm.create('Product', {
                             _id: new Realm.BSON.ObjectId(),
-                            ...formFields.reduce((acc, field) => {
-                                acc[field.key] = field.key === 'price' || field.key === 'count' ? parseFloat(field.value) : field.value;
-                                return acc;
-                            }, {}),
+                            product_name: productName,
+                            price: parseFloat(price),
+                            count: parseInt(count),
+                            description,
                         });
                         navigation.navigate('', { product: newProduct });
                     }
@@ -97,27 +88,41 @@ const EditScreen = ({ navigation, route }) => {
                 navigation.goBack();
             })
             .catch((error) => {
-                console.error('Error opening Realm:', error);
+                console.error('Error opening Realmm:', error);
             });
     };
 
     return (
         <View>
-            <HeaderComponent title='Add Screen' headerIcon={backArrow} navigation={() => navigation.goBack()} tintColor='white' />
+            <HeaderComponent title='Add Screen' headerIcon={backArrow} navigation={() => navigation.goBack()} tintColor="white" />
             <View style={{ marginHorizontal: WIDTH * 0.05, gap: HEIGHT * 0.03 }}>
                 <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: HEIGHT * 0.03 }}>Enter product details</Text>
-
-                {formFields.map((field) => (
-                    <TextInput
-                        key={field.key}
-                        value={field.value}
-                        onChangeText={(text) => handleTextInputChange(field.key, text)}
-                        placeholder={field.placeholder}
-                        keyboardType={field.keyboardType}
-                        style={{ borderWidth: 1, padding: WIDTH * 0.04, borderRadius: WIDTH * 0.02, marginTop: HEIGHT * 0.02 }}
-                    />
-                ))}
-
+                <TextInput
+                    value={productData.productName}
+                    onChangeText={(text) => setProductData({ ...productData, productName: text })}
+                    placeholder='Enter product name'
+                    style={{ borderWidth: 1, padding: WIDTH * 0.04, borderRadius: WIDTH * 0.02 }}
+                />
+                <TextInput
+                    value={productData.price}
+                    onChangeText={(text) => setProductData({ ...productData, price: text })}
+                    keyboardType="numeric"
+                    placeholder='Enter price of product'
+                    style={{ borderWidth: 1, padding: WIDTH * 0.04, borderRadius: WIDTH * 0.02 }}
+                />
+                <TextInput
+                    value={productData.description}
+                    onChangeText={(text) => setProductData({ ...productData, description: text })}
+                    placeholder='Description of product'
+                    style={{ borderWidth: 1, padding: WIDTH * 0.04, borderRadius: WIDTH * 0.02 }}
+                />
+                <TextInput
+                    value={productData.count}
+                    onChangeText={(text) => setProductData({ ...productData, count: text })}
+                    keyboardType="numeric"
+                    placeholder='Count'
+                    style={{ borderWidth: 1, padding: WIDTH * 0.04, borderRadius: WIDTH * 0.02 }}
+                />
                 <Pressable style={{ borderWidth: 1, justifyContent: 'center', alignItems: 'center', padding: WIDTH * 0.02, borderRadius: WIDTH * 0.02 }} onPress={saveProduct}>
                     <Text style={{ fontSize: 17 }}>{productId ? 'Update Product' : 'Save Product'}</Text>
                 </Pressable>
@@ -127,3 +132,4 @@ const EditScreen = ({ navigation, route }) => {
 };
 
 export default EditScreen;
+

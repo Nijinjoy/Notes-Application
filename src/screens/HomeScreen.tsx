@@ -31,11 +31,7 @@ const HomeScreen = ({ route }) => {
     const navigation = useNavigation()
     const [products, setProducts] = useState([]);
 
-    useFocusEffect(
-        React.useCallback(() => {
-            fetchData();
-        }, [route.params])
-    );
+    console.log("products==>", products);
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -43,6 +39,7 @@ const HomeScreen = ({ route }) => {
         });
         return unsubscribe
     }, [navigation])
+
 
     const fetchData = async () => {
         try {
@@ -73,21 +70,23 @@ const HomeScreen = ({ route }) => {
                     showsVerticalScrollIndicator={false}
                     renderItem={({ item }) => (
                         <View style={{ borderWidth: 0.5, borderColor: "grey", marginHorizontal: WIDTH * 0.04, margin: HEIGHT * 0.01, padding: WIDTH * 0.03, borderRadius: WIDTH * 0.03 }}>
-                            <View style={{ flexDirection: "row", flex: 0.2 }}>
-                                <Image source={burgerIcon} resizeMode="contain" style={{ width: WIDTH * 0.2, height: HEIGHT * 0.08 }} />
-                                <View style={{ flex: 0.5 }}>
+                            <View style={{ flexDirection: "row" }}>
+                                <View style={{ flex: 0.2 }}>
+                                    <Image source={burgerIcon} resizeMode="contain" style={{ width: WIDTH * 0.2, height: HEIGHT * 0.08 }} />
+                                </View>
+                                <View style={{ flex: 0.5, marginLeft: WIDTH * 0.08 }}>
                                     <Text style={{ fontSize: 16, fontWeight: "500" }}>{item.product_name}</Text>
                                     <Text style={{ opacity: 0.5, fontSize: 15 }}>{item.description}</Text>
                                     <Text style={{ fontWeight: '600', marginTop: HEIGHT * 0.01 }}>$ {item.price}</Text>
                                 </View>
-                                <View style={{ /* position: 'absolute', */ right: WIDTH * 0.01, marginTop: HEIGHT * 0.02, flex: 0.6 }}>
-                                    <Text style={{ fontWeight: 'bold', opacity: 0.5, fontSize: 13, color: item.count === 0 ? 'red' : item.count < 5 ? 'blue' : '#1a6110' }}>
-                                        {item.count > 0 ? `${item.count}X` : 'Stock Out'}
+                                <View style={{ marginTop: HEIGHT * 0.04, flex: 0.3, flexDirection: "row" }}>
+                                    <Text style={{ fontWeight: 'bold', opacity: 0.5, fontSize: 13, color: item.count === 0 ? 'red' : item.count < 5 ? 'green' : '#1a6110', marginLeft: WIDTH * 0.04 }}>
+                                        {item.count > 0 ? ` Qty:${item.count}` : 'Stock Out'}
                                     </Text>
-                                    <Pressable style={{ marginTop: HEIGHT * 0.04, width: WIDTH * 0.05, borderRadius: HEIGHT, height: HEIGHT * 0.02, right: WIDTH * 0.01, /* position: "absolute" */ }} onPress={() => navigation.navigate('EditScreen', { productId: item._id })}>
-                                        <Image source={pencil} style={{ width: WIDTH * 0.1, height: HEIGHT * 0.02, tintColor: 'black' }} resizeMode='contain' />
-                                    </Pressable>
                                 </View>
+                                <Pressable style={{ borderRadius: WIDTH * 0.01, borderWidth: 1, width: WIDTH * 0.03, height: HEIGHT * 0.03, justifyContent: "center", alignItems: "center", padding: WIDTH * 0.025, borderColor: 'grey' }} onPress={() => navigation.navigate('EditScreen', { productId: item._id })}>
+                                    <Image source={pencil} style={{ width: WIDTH * 0.1, height: HEIGHT * 0.02, tintColor: 'black' }} resizeMode='contain' />
+                                </Pressable>
                             </View>
                         </View>
                     )}
@@ -102,21 +101,3 @@ const HomeScreen = ({ route }) => {
 }
 
 export default HomeScreen
-
-
-{/* <View style={{ borderWidth: 1, marginHorizontal: WIDTH * 0.05, paddingHorizontal: WIDTH * 0.035, margin: WIDTH * 0.02, borderRadius: 8, padding: HEIGHT * 0.01, flexDirection: "row", borderColor: item.count === 0 ? 'red' : item.count < 5 ? 'blue' : 'green' }}>
-<View>
-    <Text style={{ fontSize: 18, fontWeight: '600' }}>Product:{item.product_name} </Text>
-    <Text style={{ fontSize: 18, }}>Description:==>{item.description}</Text>
-    <Text style={{ fontSize: 18, }}>Product Amount==>{item.price}</Text>
-    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
-        <Text style={{ fontSize: 18 }}>Product Count:==></Text>
-        <View style={{ borderRadius: HEIGHT * 0.015, backgroundColor: 'blue', width: HEIGHT * 0.05, height: HEIGHT * 0.05, alignItems: 'center', justifyContent: 'center', marginLeft: WIDTH * 0.02, backgroundColor: item.count === 0 ? 'red' : item.count < 5 ? 'yellow' : 'green' }}>
-            <Text style={{ fontSize: 18 }}>{item.count}</Text>
-        </View>
-    </View>
-</View>
-<Pressable style={{ borderWidth: 1, height: HEIGHT * 0.03, justifyContent: "center", alignItems: "center", borderRadius: HEIGHT * 0.01, borderColor: item.count === 0 ? 'red' : item.count < 5 ? 'blue' : 'green', position: "absolute", right: WIDTH * 0.02, margin: WIDTH * 0.03 }} onPress={() => navigation.navigate('EditScreen', { productId: item._id })}>
-    <Image source={pencil} style={{ width: WIDTH * 0.05, height: HEIGHT * 0.02 }} resizeMode='contain' />
-</Pressable>
-</View> */}

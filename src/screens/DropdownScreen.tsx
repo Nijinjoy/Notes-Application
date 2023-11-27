@@ -80,7 +80,7 @@ const DropdownScreen = ({ navigation }) => {
                 defaultButtonText="Select a Product from List"
                 buttonStyle={{ borderWidth: 1, width: WIDTH * 0.7, alignSelf: "center", margin: HEIGHT * 0.03, padding: HEIGHT * 0.02, flexDirection: "row", borderRadius: WIDTH * 0.1 }}
                 buttonTextStyle={{ color: 'black' }}
-                dropdownStyle={{ width: WIDTH * 0.55, alignSelf: "center", margin: HEIGHT * 0.05, borderRadius: WIDTH * 0.1 }}
+                dropdownStyle={{ width: WIDTH * 0.6, alignSelf: "center", margin: HEIGHT * 0.05, borderRadius: WIDTH * 0.1 }}
                 rowStyle={{ padding: HEIGHT * 0.02, borderBottomWidth: 1, borderColor: 'lightgray' }}
             />
             <View style={{ flexDirection: "row", borderWidth: 1, padding: WIDTH * 0.02, borderRadius: WIDTH * 0.02, justifyContent: "space-between", width: WIDTH * 0.55, margin: HEIGHT * 0.02, alignSelf: "center", borderColor: 'red' }}>
