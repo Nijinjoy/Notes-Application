@@ -4,6 +4,7 @@ import { HEIGHT, WIDTH } from '../constants/Dimension'
 import Realm from "realm";
 import HeaderComponent from '../components/HeaderComponent';
 import { backArrow } from '../assets/images';
+import TextInputComponent from '../components/TextInputComponent';
 
 
 class Product extends Realm.Object {
@@ -24,11 +25,10 @@ const realmConfig = {
     schema: [Product],
 }
 
+
 const EditScreen = ({ navigation, route }) => {
     const [productData, setProductData] = useState({ productName: '', price: '', description: '', count: '' });
     const { productId } = route.params || {}
-
-    console.log("productData===>", productData);
 
     useEffect(() => {
         if (productId) {
@@ -94,42 +94,16 @@ const EditScreen = ({ navigation, route }) => {
             <HeaderComponent title='Add Screen' headerIcon={backArrow} navigation={() => navigation.goBack()} tintColor="white" />
             <View style={{ marginHorizontal: WIDTH * 0.05, gap: HEIGHT * 0.03 }}>
                 <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: HEIGHT * 0.03 }}>Enter product details</Text>
-
-                {/* <TextInput
-                    value={productData.productName}
-                    onChangeText={(text) => setProductData({ ...productData, productName: text })}
-                    placeholder='Enter product name'
-                    style={{ borderWidth: 1, padding: WIDTH * 0.04, borderRadius: WIDTH * 0.02 }}
-                />
-                <TextInput
-                    value={productData.price}
-                    onChangeText={(text) => setProductData({ ...productData, price: text })}
-                    keyboardType="numeric"
-                    placeholder='Enter price of product'
-                    style={{ borderWidth: 1, padding: WIDTH * 0.04, borderRadius: WIDTH * 0.02 }}
-                />
-                <TextInput
-                    value={productData.description}
-                    onChangeText={(text) => setProductData({ ...productData, description: text })}
-                    placeholder='Description of product'
-                    style={{ borderWidth: 1, padding: WIDTH * 0.04, borderRadius: WIDTH * 0.02 }}
-                />
-                <TextInput
-                    value={productData.count}
-                    onChangeText={(text) => setProductData({ ...productData, count: text })}
-                    keyboardType="numeric"
-                    placeholder='Count'
-                    style={{ borderWidth: 1, padding: WIDTH * 0.04, borderRadius: WIDTH * 0.02 }}
-                /> */}
-
-                <TextInput
-                    // key={key}
-                    // value={value.toString()}
-                    placeholder='Enter name'
-                    onChangeText={(text) => setProductData({ ...productData, [key]: text })}
-                    style={{ borderWidth: 1, padding: WIDTH * 0.03, borderRadius: WIDTH * 0.01 }}
-                />
-
+                {Object.entries(productData).map(([key, value]) => (
+                    <TextInput
+                        key={key}
+                        placeholder={`Enter ${key.replace()}`}
+                        value={value.toString()}
+                        onChangeText={(text) => setProductData({ ...productData, [key]: text })}
+                        style={{ borderWidth: 0.5, padding: WIDTH * 0.03, borderRadius: WIDTH * 0.02 }}
+                    />
+                ))
+                }
                 <Pressable style={{ borderWidth: 1, justifyContent: 'center', alignItems: 'center', padding: WIDTH * 0.02, borderRadius: WIDTH * 0.02 }} onPress={saveProduct}>
                     <Text style={{ fontSize: 17 }}>{productId ? 'Update Product' : 'Save Product'}</Text>
                 </Pressable>

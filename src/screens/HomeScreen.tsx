@@ -40,7 +40,6 @@ const HomeScreen = ({ route }) => {
         return unsubscribe
     }, [navigation])
 
-
     const fetchData = async () => {
         try {
             const realm = await Realm.open(realmConfig)
